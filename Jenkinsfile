@@ -6,7 +6,7 @@ pipeline {
      genericHeaderVariables: [
       [key: 'X-GitHub-Event', regexpFilter: '']
      ],
-     token: credentials('github_token'),
+     token: credentials('token'),
 
      causeString: 'Triggered on $x_github_event',
       
