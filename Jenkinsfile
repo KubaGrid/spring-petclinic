@@ -1,16 +1,12 @@
 pipeline {
   agent { label 'docker' }
-
-  environment {
-    TOKEN = credentials('github_token')
-  }
   
   triggers {
     GenericTrigger(
      genericHeaderVariables: [
       [key: 'X-GitHub-Event', regexpFilter: '']
      ],
-     token: '$TOKEN',
+     token: credentials('github_token'),
 
      causeString: 'Triggered on $x_github_event',
       
