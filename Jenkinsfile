@@ -1,10 +1,11 @@
 pipeline {
-  agent { label 'docker' }
-  
+  agent any
+
   triggers {
     GenericTrigger(
      genericHeaderVariables: [
-      [key: 'X-GitHub-Event', regexpFilter: '']
+      [key: 'X-GitHub-Event', regexpFilter: ''],
+      [key: 'X-GitHub-Hook-ID', regexpFilter: '']
      ],
      genericVariables: [
        [key: 'ref', value: '$.ref', regexpFilter: '^(refs/heads/|refs/remotes/origin/)'] 
@@ -23,13 +24,29 @@ pipeline {
   }
   
   stages {
-    stage("Hello world") {
+    stage("Checkstyle") {
       steps {
-        sh """
-          echo 'Hello world: $ref'
-          echo 'Event: $x_github_event'
-        """
+        sh 'mvn site'
       }
+    }
+    stage("Test") {
+      steps {
+        sh 'mvn test'
+      }
+    }
+    stage("Build") {
+      agent { label 'docker' }
+
+      steps {
+        sh 'docker build -t kkrzych/mr:$x_github_hook_id'
+        sh 'docker push kkrzych/rm:$x_github_hook_id'
+      }
+    }
+  }
+  post {
+    always {
+      onlyIfSuccessful: true,
+      archiveArtifacts articats: '**/*.html', '**/*.xml'
     }
   }
   
