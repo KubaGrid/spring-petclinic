@@ -7,7 +7,7 @@ pipeline {
       [key: 'X-GitHub-Event', regexpFilter: '']
      ],
      genericVariables: [
-       [key: 'ref', value: '$.ref', regexpFilter: 'refs/heads/'] 
+       [key: 'ref', value: '$.ref', regexpFilter: '^(refs/heads/|refs/remotes/origin/)'] 
      ],
      token: 'abc123',
 
