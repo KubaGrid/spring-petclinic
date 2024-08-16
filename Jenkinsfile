@@ -1,4 +1,6 @@
 pipeline {
+  agent { label 'docker' }
+  
   stages {
     stage("Hello world") {
       sh """
