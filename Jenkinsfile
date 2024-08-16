@@ -6,6 +6,9 @@ pipeline {
      genericHeaderVariables: [
       [key: 'X-GitHub-Event', regexpFilter: '']
      ],
+     genericVariables: [
+       [key: 'ref', value: '$.ref', regexpFilter: 'refs/heads/'] 
+     ],
      token: 'abc123',
 
      causeString: 'Triggered on $x_github_event',
@@ -23,7 +26,7 @@ pipeline {
     stage("Hello world") {
       steps {
         sh """
-          echo 'Hello world'
+          echo 'Hello world: $ref'
           echo 'Event: $x_github_event'
         """
       }
