@@ -7,7 +7,7 @@ pipeline {
       [key: 'X-GitHub-Event', regexpFilter: '^(ping|push|pull_request)$']
      ],
 
-     causeString: 'Triggered on $X_GitHub_Event',
+     causeString: 'Triggered on $x_github_event',
       
      printContributedVariables: true,
      printPostContent: true,
@@ -23,7 +23,7 @@ pipeline {
       steps {
         sh """
           echo 'Hello world'
-          echo 'Event: $X_GitHub_Event'
+          echo 'Event: $x_github_event'
         """
       }
     }
