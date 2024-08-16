@@ -4,7 +4,7 @@ pipeline {
   triggers {
     GenericTrigger(
      genericHeaderVariables: [
-      [key: 'X-GitHub-Event', regexpFilter: '^(ping|push|pull\_request)$']
+      [key: 'X-GitHub-Event', regexpFilter: '^(ping|push|pull_request)$']
      ],
 
      causeString: 'Triggered on $X-GitHub-Event',
