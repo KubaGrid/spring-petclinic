@@ -45,7 +45,6 @@ pipeline {
   }
   post {
     always {
-      onlyIfSuccessful: true,
       archiveArtifacts articats: '**/*.html', '**/*.xml'
     }
   }
