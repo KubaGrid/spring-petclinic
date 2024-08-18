@@ -21,6 +21,10 @@ pipeline {
      shouldNotFlatten: false,
     )
   }
+
+  environment {
+    DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+  }
   
   stages {
     stage("Checkstyle") {
@@ -37,7 +41,8 @@ pipeline {
       agent { label 'docker' }
 
       steps {
-        sh 'docker build -t kkrzych/mr:$x_github_hook_id'
+        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+        sh 'docker build -t kkrzych/mr:$x_github_hook_id -f Dockerfile-multi_stage .'
         sh 'docker push kkrzych/rm:$x_github_hook_id'
       }
     }
