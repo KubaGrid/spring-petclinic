@@ -25,7 +25,7 @@ pipeline {
   stages {
     stage("Checkstyle") {
       steps {
-        sh './gradlew check'
+        sh './gradlew clean check'
       }
     }
     stage("Test") {
