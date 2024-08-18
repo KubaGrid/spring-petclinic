@@ -15,7 +15,6 @@ pipeline {
      causeString: 'Triggered on $x_github_event',
       
      printContributedVariables: true,
-     printPostContent: true,
 
      silentResponse: false,
      
@@ -26,12 +25,12 @@ pipeline {
   stages {
     stage("Checkstyle") {
       steps {
-        sh 'mvn site'
+        sh './mvnw site'
       }
     }
     stage("Test") {
       steps {
-        sh 'mvn test'
+        sh './mvnw test'
       }
     }
     stage("Build") {
@@ -45,7 +44,7 @@ pipeline {
   }
   post {
     always {
-      archiveArtifacts artifacts: '**/*.html, **/*.xml'
+      archiveArtifacts artifacts: './target/{site,surefire-reports}/*.html, ./target/{site,surefire-reports}/*.xml'
     }
   }
   
