@@ -25,12 +25,12 @@ pipeline {
   stages {
     stage("Checkstyle") {
       steps {
-        sh './mvnw site'
+        sh 'gradle check'
       }
     }
     stage("Test") {
       steps {
-        sh './mvnw test'
+        sh 'gradle test -x check'
       }
     }
     stage("Build") {
@@ -44,7 +44,9 @@ pipeline {
   }
   post {
     always {
-      archiveArtifacts artifacts: './target/{site,surefire-reports}/*.html, ./target/{site,surefire-reports}/*.xml'
+      archiveArtifacts artifacts: './build/reports/{tests,checkstyle}/*.html,./build/reports/{tests,checkstyle}/*.xml',
+      fingerprint: true,
+      onlyIfSuccessful: true
     }
   }
   
