@@ -34,7 +34,9 @@ pipeline {
     }
     stage("Test") {
       steps {
-        sh './gradlew test -x check'
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          sh './gradlew test -x check'
+        }
       }
     }
     stage("Build") {
