@@ -45,7 +45,7 @@ pipeline {
   }
   post {
     always {
-      archiveArtifacts articats: '**/*.html, **/*.xml'
+      archiveArtifacts artifcats: '**/*.html, **/*.xml'
     }
   }
   
