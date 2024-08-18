@@ -25,12 +25,12 @@ pipeline {
   stages {
     stage("Checkstyle") {
       steps {
-        sh 'gradle check'
+        sh './gradle check'
       }
     }
     stage("Test") {
       steps {
-        sh 'gradle test -x check'
+        sh './gradle test -x check'
       }
     }
     stage("Build") {
