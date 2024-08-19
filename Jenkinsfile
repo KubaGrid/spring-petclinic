@@ -29,7 +29,7 @@ pipeline {
   stages {
     stage("Checkstyle") {
       when {
-        expression { return env.x_github_event' == 'pull_request' }
+        expression { return env.x_github_event == 'pull_request' }
       }
       steps {
         sh './gradlew clean check -x test'
@@ -37,7 +37,7 @@ pipeline {
     }
     stage("Test") {
       when {
-        expression { return env.x_github_event == 'pull_request' }
+        expression { env.x_github_event == 'pull_request' }
       }
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
