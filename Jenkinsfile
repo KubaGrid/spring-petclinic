@@ -32,7 +32,7 @@ pipeline {
         sh './gradlew clean check -x test'
       }
       when {
-
+        environment name: 'x_github_event', value 'pull_request'
       }
     }
     stage("Test") {
@@ -42,7 +42,7 @@ pipeline {
         }
       }
       when {
-          environment name: ''
+        environment name: 'x_github_event', value 'pull_request'
       }
     }
     stage("Build") {
@@ -52,17 +52,23 @@ pipeline {
         sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW &>/dev/null'
         sh 'docker build -t kkrzych/mr:$x_github_hook_id -f Dockerfile-multi_stage . &>/dev/null'
       }
+      when {
+        return env.x_github_event in ['pull_request', 'push']
+      }
     }
     stage("Deploy") {
       agent { label 'docker'}
       steps {
         sh 'docker push kkrzych/mr:$x_github_hook_id'
       }
+      when {
+        return env.x_github_event in ['pull_request', 'push']
+      }
     }
   }
   post {
     always {
-      archiveArtifacts artifacts: './build/reports/tests/*.xml, ./build/reports/tests/*.html, ./build/reports/checkstyle/*.html, ./build/reports/checkstyle/*.xml',
+      archiveArtifacts artifacts: './build/reports/tests/test, ./build/reports/tests/test, ./build/reports/checkstyle/*.html, ./build/reports/checkstyle/*.xml',
       fingerprint: true,
       onlyIfSuccessful: true
     }
