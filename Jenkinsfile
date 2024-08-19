@@ -8,7 +8,8 @@ pipeline {
       [key: 'X-GitHub-Hook-ID', regexpFilter: '']
      ],
      genericVariables: [
-       [key: 'ref', value: '$.ref', regexpFilter: '^(refs/heads/|refs/remotes/origin/)'] 
+       [key: 'ref', value: '$.ref', regexpFilter: '^(refs/heads/|refs/remotes/origin/)'] ,
+        [key: 'action', value: '$.action'],
      ],
      token: 'abc123',
 
@@ -19,6 +20,8 @@ pipeline {
      silentResponse: false,
      
      shouldNotFlatten: false,
+     regexpFilterText: '$x_github_event:$ref',
+     regexpFilterExpression: '^(pull_request:.*|push:main)$'
     )
   }
 
@@ -83,6 +86,7 @@ pipeline {
       }
 
       steps {
+        sh 'printenv'
         sh 'docker push kkrzych/main:$GIT_COMMIT'
       }
     }
