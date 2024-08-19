@@ -68,7 +68,7 @@ pipeline {
       }
 
       steps {
-        sh 'docker push kkrzych/mr:$x_github_hook_id'
+        sh 'docker push kkrzych/mr:$x_github_hook_id-STAGING'
       }
     }
   
