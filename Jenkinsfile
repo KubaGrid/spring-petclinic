@@ -28,41 +28,44 @@ pipeline {
   
   stages {
     stage("Checkstyle") {
-      steps {
-        sh './gradlew clean check -x test'
-      }
       when {
         environment name: 'x_github_event', value 'pull_request'
       }
+      steps {
+        sh './gradlew clean check -x test'
+      }
     }
     stage("Test") {
+      when {
+        environment name: 'x_github_event', value 'pull_request'
+      }
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
           sh './gradlew test -x check'
         }
       }
-      when {
-        environment name: 'x_github_event', value 'pull_request'
-      }
     }
     stage("Build") {
       agent { label 'docker' }
+
+      when {
+        return env.x_github_event in ['pull_request', 'push']
+      }
 
       steps {
         sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW &>/dev/null'
         sh 'docker build -t kkrzych/mr:$x_github_hook_id -f Dockerfile-multi_stage . &>/dev/null'
       }
-      when {
-        return env.x_github_event in ['pull_request', 'push']
-      }
     }
     stage("Deploy") {
       agent { label 'docker'}
-      steps {
-        sh 'docker push kkrzych/mr:$x_github_hook_id'
-      }
+
       when {
         return env.x_github_event in ['pull_request', 'push']
+      }
+
+      steps {
+        sh 'docker push kkrzych/mr:$x_github_hook_id'
       }
     }
   }
