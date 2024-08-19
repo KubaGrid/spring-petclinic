@@ -31,12 +31,18 @@ pipeline {
       steps {
         sh './gradlew clean check -x test'
       }
+      when {
+
+      }
     }
     stage("Test") {
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
           sh './gradlew test -x check'
         }
+      }
+      when {
+          environment name: ''
       }
     }
     stage("Build") {
@@ -56,7 +62,7 @@ pipeline {
   }
   post {
     always {
-      archiveArtifacts artifacts: './build/reports/tests/*.xml ./build/reports/tests/*.html ./build/reports/checkstyle/*.html, ./build/reports/checkstyle/*.xml',
+      archiveArtifacts artifacts: './build/reports/tests/*.xml, ./build/reports/tests/*.html, ./build/reports/checkstyle/*.html, ./build/reports/checkstyle/*.xml',
       fingerprint: true,
       onlyIfSuccessful: true
     }
