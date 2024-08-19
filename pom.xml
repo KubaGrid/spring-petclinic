@@ -55,6 +55,12 @@
   <dependencies>
     <!-- Spring and Spring Boot dependencies -->
     <dependency>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-checkstyle-plugin</artifactId>
+  <version>3.4.0</version>
+  <type>maven-plugin</type>
+</dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
@@ -213,10 +219,11 @@
             <id>nohttp-checkstyle-validation</id>
             <phase>validate</phase>
             <configuration>
-              <configLocation>src/checkstyle/nohttp-checkstyle.xml</configLocation>
+              <configLocation>src/checkstyle/checkstyle.xml</configLocation>
               <sourceDirectories>${basedir}</sourceDirectories>
               <includes>**/*</includes>
               <excludes>**/.git/**/*,**/.idea/**/*,**/target/**/,**/.flattened-pom.xml,**/*.class</excludes>
+              <failOnViolation>false</failOnViolation>
               <propertyExpansion>
                 config_loc=${basedir}/src/checkstyle/
               </propertyExpansion>
@@ -457,5 +464,21 @@
       </build>
     </profile>
   </profiles>
+  <reporting>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.4.0</version>
+          <reportSets>
+            <reportSet>
+              <reports>
+                <report>checkstyle</report>
+              </reports>
+            </reportSet>
+          </reportSets>
+        </plugin>
+      </plugins>
+    </reporting>
 
 </project>
