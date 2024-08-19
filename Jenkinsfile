@@ -43,15 +43,20 @@ pipeline {
       agent { label 'docker' }
 
       steps {
-        sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
-        sh 'docker build -t kkrzych/mr:$x_github_hook_id -f Dockerfile-multi_stage .'
+        sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW &>/dev/null'
+        sh 'docker build -t kkrzych/mr:$x_github_hook_id -f Dockerfile-multi_stage . &>/dev/null'
+      }
+    }
+    stage("Deploy") {
+      agent { label 'docker'}
+      steps {
         sh 'docker push kkrzych/mr:$x_github_hook_id'
       }
     }
   }
   post {
     always {
-      archiveArtifacts artifacts: './build/reports/{tests,checkstyle}/*.html,./build/reports/{tests,checkstyle}/*.xml',
+      archiveArtifacts artifacts: './build/reports/tests/*.xml ./build/reports/tests/*.html ./build/reports/checkstyle/*.html, ./build/reports/checkstyle/*.xml',
       fingerprint: true,
       onlyIfSuccessful: true
     }
