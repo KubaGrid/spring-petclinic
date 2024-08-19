@@ -89,7 +89,7 @@ pipeline {
   }
   post {
     always {
-      archiveArtifacts artifacts: './build/reports/tests/test, ./build/reports/tests/test, ./build/reports/checkstyle/*.html, ./build/reports/checkstyle/*.xml',
+      archiveArtifacts artifacts: 'build/reports/tests/test, build/reports/tests/test, build/reports/checkstyle/*.html, build/reports/checkstyle/*.xml',
       fingerprint: true,
       onlyIfSuccessful: true
     }
