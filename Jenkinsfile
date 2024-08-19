@@ -45,7 +45,7 @@ pipeline {
       steps {
         sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
         sh 'docker build -t kkrzych/mr:$x_github_hook_id -f Dockerfile-multi_stage .'
-        sh 'docker push kkrzych/rm:$x_github_hook_id'
+        sh 'docker push kkrzych/mr:$x_github_hook_id'
       }
     }
   }
