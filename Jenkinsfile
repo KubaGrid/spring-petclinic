@@ -29,7 +29,7 @@ pipeline {
   stages {
     stage("Checkstyle") {
       when {
-        environment name: 'x_github_event', value 'pull_request'
+        expression { return env.x_github_event' == 'pull_request' }
       }
       steps {
         sh './gradlew clean check -x test'
@@ -37,7 +37,7 @@ pipeline {
     }
     stage("Test") {
       when {
-        environment name: 'x_github_event', value 'pull_request'
+        expression { return env.x_github_event == 'pull_request' }
       }
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -49,7 +49,7 @@ pipeline {
       agent { label 'docker' }
 
       when {
-        return env.x_github_event in ['pull_request', 'push']
+        expression { env.x_github_event in ['pull_request', 'push'] }
       }
 
       steps {
@@ -57,15 +57,33 @@ pipeline {
         sh 'docker build -t kkrzych/mr:$x_github_hook_id -f Dockerfile-multi_stage . &>/dev/null'
       }
     }
-    stage("Deploy") {
+
+    stage("Deploy to staging") {
       agent { label 'docker'}
 
       when {
-        return env.x_github_event in ['pull_request', 'push']
+        allOf{
+          expression { env.x_github_event == 'pull_request' }
+        }
       }
 
       steps {
         sh 'docker push kkrzych/mr:$x_github_hook_id'
+      }
+    }
+  
+    stage("Deploy") {
+      agent { label 'docker'}
+
+      when {
+        allOf{
+          expression { env.x_github_event == 'push' }
+          expression { env.ref == 'main' }
+        }
+      }
+
+      steps {
+        sh 'docker push kkrzych/main:$GIT_COMMIT'
       }
     }
   }
