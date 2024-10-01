@@ -63,11 +63,11 @@ build:
   script:
       - |
         if [[ "$CI_PIPELINE_SOURCE" == "push" && "$CI_COMMIT_BRANCH" == "main" ]]; then
-          CONTAINER_REGISTRY=$CONTAINER_REGISTRY/$DOCKER_MAIN_SUFFIX
+          IMAGE=$CONTAINER_REGISTRY/$DOCKER_MAIN_SUFFIX
         elif [[ "$CI_PIPELINE_SOURCE" == "merge_request_event" ]]; then
-          CONTAINER_REGISTRY=$CONTAINER_REGISTRY/$DOCKER_MERGE_REQUEST_SUFFIX
+          IMAGE=$CONTAINER_REGISTRY/$DOCKER_MERGE_REQUEST_SUFFIX
         fi
       - IMAGE=$CONTAINER_REGISTRY:$CI_COMMIT_SHORT_SHA
-      - "docker build -t $IMAGE -f Dockerfile ."
-      - "echo $CONTAINER_REGISTRY_PSW | docker login -u $CONTAINER_REGISTRY_USR --password-stdin $CONTAINER_REGISTRY"
-      - "docker push $IMAGE"  
+      - "docker build -t $IMAGE:$CI_COMMIT_SHORT_SHA -t $IMAGE:latest -f Dockerfile ."
+      - "echo $CONTAINER_REGISTRY_PSW | docker login -u $CONTAINER_REGISTRY_USR --password-stdin $IMAGE"
+      - "docker push $IMAGE --all-tags"  
