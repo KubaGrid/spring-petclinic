@@ -6,9 +6,9 @@ stages:
 
 workflow:
   rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^feature\/.*$/ || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop"'
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-    - if: '$CI_PIPELINE_SOURCE == "develop" || $CI_PIPELINE_SOURCE == "main"'
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH =~ /^feature\/.*$/ && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME == "develop"'
 
 default:
   image: maven
@@ -67,7 +67,6 @@ build:
         elif [[ "$CI_PIPELINE_SOURCE" == "merge_request_event" ]]; then
           IMAGE=$CONTAINER_REGISTRY/$DOCKER_MERGE_REQUEST_SUFFIX
         fi
-      - IMAGE=$CONTAINER_REGISTRY:$CI_COMMIT_SHORT_SHA
       - "docker build -t $IMAGE:$CI_COMMIT_SHORT_SHA -t $IMAGE:latest -f Dockerfile ."
       - "echo $CONTAINER_REGISTRY_PSW | docker login -u $CONTAINER_REGISTRY_USR --password-stdin $IMAGE"
       - "docker push $IMAGE --all-tags"  
